@@ -62,17 +62,22 @@ class ViewController {
     }
 
     newPuzzleView() {
+        this.tileViews = []
         const puzzleView = document.createElement("div")
         for (let i = 0; i < this.puzzleModel.origin.rows; ++i) {
+            const lineView = document.createElement("div")
             for (let j = 0; j < this.puzzleModel.origin.columns; ++j) {
                 const index = this.puzzleModel.origin.oneDIndex([i, j])
                 const value = this.puzzleModel.origin.oneDArray[index]
 
-                const tileView = document.createElement("div")
+                const tileView = document.createElement("span")
+                tileView.className = value === 0 ? "tile specialTile" : "tile"
                 tileView.id = `tile${index}`
                 tileView.textContent = value.toString()
-                puzzleView.appendChild(tileView)
+                lineView.appendChild(tileView)
+                this.tileViews.push(tileView)
             }
+            puzzleView.appendChild(lineView)
         }
         return puzzleView
     }
@@ -99,8 +104,9 @@ class ViewController {
     }
 
     updatePuzzleFromNode(node) {
-        for (let i = 0; i < node.state.oneDArray.length; ++i) {
-            this.puzzleView.children[i].textContent = node.state.oneDArray[i].toString()
-        }
+        this.tileViews.forEach((value, index) => {
+            value.textContent = node.state.oneDArray[index].toString()
+            value.className = node.state.oneDArray[index] === 0 ? "tile specialTile" : "tile"
+        })
     }
 }

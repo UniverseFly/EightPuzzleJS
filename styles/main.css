@@ -1,8 +1,17 @@
-#tile1 {
-    border: 2px solid;
-    width: 50px;
-    height: 50px;
+.tile {
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    padding: 30px;
+    margin: 10px;
     text-align: center;
-    left: 400px;
-    position: absolute;
+    vertical-align: middle;
+    background-color: mediumpurple;
+    border: solid lightgreen 5px;
+    color: azure;
+    display: inline-block;
+}
+
+.specialTile {
+    visibility: hidden;
 }
