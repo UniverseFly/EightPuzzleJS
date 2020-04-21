@@ -1,4 +1,29 @@
 class Puzzle {
+    static random(rows, columns) {
+        const goal = this.goalGenerator(rows, columns)
+        const origin = this.originGenerator(rows, columns, goal)
+        return new Puzzle(rows, columns, origin, goal)
+    }
+
+    static goalGenerator(rows, columns) {
+        let goal = [...Array(rows * columns).keys()].map(x => x + 1)
+        goal[goal.length - 1] = 0
+        return goal
+    }
+
+    static originGenerator(rows, columns, goal) {
+        let origin = [...Array(rows * columns).keys()]
+        while (true) {
+            origin.forEach((value, index, array) => {
+                swapArray(array, index, random(index, array.length))
+            })
+            const puzzle = new Puzzle(3, 3, origin, goal)
+            if (puzzle.isSolvable()) {
+                return origin
+            }
+        }
+    }
+
     constructor(rows, columns, origin, goal) {
         function sum(arr) {
             let result = 0

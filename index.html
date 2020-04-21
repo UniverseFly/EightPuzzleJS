@@ -2,9 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Eight Puzzle</title>
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
+<div id="puzzleArea"></div>
+
+<div>
+    <label for="puzzleSize">Choose the number of rows and columns of the board</label>
+    <select id="puzzleSize">
+        <option id="3times3">(3, 3)</option>
+        <option id="3times4">(3, 4)</option>
+    </select>
+</div>
+
+<div>
+    <button id="random">randomize origin</button>
+    <br>
+    <label for="origin">Origin: </label>
+    <span id="origin"></span>
+    <br>
+    <label for="goal"></label>
+    <span id="goal"></span>
+    <br>
+    <button id="recover">recover</button>
+</div>
+
+<div>
+    <button id="goodSolve">Solve by A-Star using a good heuristic function</button>
+    <br>
+    <button id="badSolve">Solve by A-Star using a bad heuristic function</button>
+    <br>
+    <button id="greedySolve">Solve by greedy first search</button>
+    <br>
+    <button id="slowSolve">Solve by uniform-cost search</button>
+</div>
+
+<div>
+    <button id="next" disabled>Next</button>
+</div>
 
 </body>
 <script src="scripts/Utilities.js"></script><!---->
@@ -13,5 +49,6 @@
 <script src="scripts/PuzzleTree.js"></script>
 <script src="scripts/BestFirstSearchable.js"></script>
 <script src="scripts/PuzzleAgent.js"></script>
+<script src="scripts/ViewController.js"></script>
 <script src="scripts/main.js"></script>
 </html>

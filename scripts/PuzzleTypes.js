@@ -33,4 +33,14 @@ class PuzzleNode {
         this.action = action
         this.pathCost = pathCost
     }
+
+    expansion() {
+        let current = this
+        let result = []
+        while (current !== null) {
+            result.unshift(current)
+            current = current.parent
+        }
+        return result
+    }
 }
