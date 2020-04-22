@@ -6,42 +6,46 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-<div id="puzzleArea"></div>
+<h1 style="text-align: center">Eight & Twelve Puzzle</h1>
+<h4 style="text-align: center" class="author">By 魏宇翔</h4>
+<div class="box">
 
-<div>
-    <label for="puzzleSize">Choose the number of rows and columns of the board</label>
-    <select id="puzzleSize">
-        <option id="3times3">(3, 3)</option>
-        <option id="3times4">(3, 4)</option>
-    </select>
+    <div id="puzzleArea"></div>
+
+    <div id="options">
+        <div id="puzzleInfo">
+            <label for="puzzleSize">Dimension</label>
+            <select id="puzzleSize">
+                <option id="3times3">(3, 3)</option>
+                <option id="3times4">(3, 4)</option>
+            </select>
+            <button id="random">randomize origin</button>
+            <div><label for="origin">Origin: </label></div>
+            <span id="origin"></span>
+            <div><label for="goal">Goal:</label></div>
+            <span id="goal"></span>
+            <button id="recover">recover</button>
+        </div>
+
+        <br>
+
+        <div id="solvePuzzle">
+            <div>
+                <button id="goodSolve">Solve by A-Star using a good heuristic function</button>
+                <br>
+                <button id="badSolve">Solve by A-Star using a bad heuristic function</button>
+                <br>
+                <button id="greedySolve">Solve by greedy first search</button>
+                <br>
+                <button id="slowSolve">Solve by uniform-cost search</button>
+            </div>
+            <div>
+                <button id="next" disabled>Next</button>
+            </div>
+        </div>
+    </div>
+
 </div>
-
-<div>
-    <button id="random">randomize origin</button>
-    <br>
-    <label for="origin">Origin: </label>
-    <span id="origin"></span>
-    <br>
-    <label for="goal"></label>
-    <span id="goal"></span>
-    <br>
-    <button id="recover">recover</button>
-</div>
-
-<div>
-    <button id="goodSolve">Solve by A-Star using a good heuristic function</button>
-    <br>
-    <button id="badSolve">Solve by A-Star using a bad heuristic function</button>
-    <br>
-    <button id="greedySolve">Solve by greedy first search</button>
-    <br>
-    <button id="slowSolve">Solve by uniform-cost search</button>
-</div>
-
-<div>
-    <button id="next" disabled>Next</button>
-</div>
-
 </body>
 <script src="scripts/Utilities.js"></script><!---->
 <script src="scripts/PuzzleTypes.js"></script>
@@ -49,6 +53,9 @@
 <script src="scripts/PuzzleTree.js"></script>
 <script src="scripts/BestFirstSearchable.js"></script>
 <script src="scripts/PuzzleAgent.js"></script>
+<script src="scripts/BadPuzzleAgent.js"></script>
+<script src="scripts/GreedyPuzzleAgent.js"></script>
+<script src="scripts/SlowPuzzleAgent.js"></script>
 <script src="scripts/ViewController.js"></script>
 <script src="scripts/main.js"></script>
 </html>
