@@ -4,6 +4,7 @@ class ViewController {
         const goal = [1, 2, 3, 4, 5, 6, 7, 8, 0]
 
         this.puzzleModel = new Puzzle(3, 3, origin, goal)
+        this.currentNode = new PuzzleNode(this.puzzleModel.origin)
 
         this.refreshOriginBox()
         this.refreshGoalBox()
@@ -16,6 +17,7 @@ class ViewController {
             () => {
                 const size = this.getDimension()
                 this.puzzleModel = Puzzle.random(size.rows, size.columns)
+                this.currentNode = new PuzzleNode(this.puzzleModel.origin)
                 this.refreshPuzzleView()
                 this.refreshOriginBox()
                 this.refreshGoalBox()
@@ -24,6 +26,7 @@ class ViewController {
             () => {
                 const size = this.getDimension()
                 this.puzzleModel = Puzzle.random(size.rows, size.columns)
+                this.currentNode = new PuzzleNode(this.puzzleModel.origin)
                 this.refreshOriginBox()
                 this.refreshPuzzleView()
             })
@@ -63,21 +66,34 @@ class ViewController {
 
     newPuzzleView() {
         this.tileViews = []
-        const puzzleView = document.createElement("div")
-        for (let i = 0; i < this.puzzleModel.origin.rows; ++i) {
-            const lineView = document.createElement("div")
-            for (let j = 0; j < this.puzzleModel.origin.columns; ++j) {
-                const index = this.puzzleModel.origin.oneDIndex([i, j])
-                const value = this.puzzleModel.origin.oneDArray[index]
 
-                const tileView = document.createElement("span")
-                tileView.className = value === 0 ? "tile specialTile" : "tile"
-                tileView.id = `tile${index}`
+        const currentState = this.currentNode.state
+        const width = 150
+        const height = 150
+        const frameWidth = width * currentState.columns
+        const frameHeight = height * currentState.rows
+        const puzzleView = document.createElement("div")
+        puzzleView.id = "puzzleFrame"
+        puzzleView.style.width = `${frameWidth}px`
+        puzzleView.style.height = `${frameHeight}px`
+
+        for (let i = 0; i < currentState.rows; ++i) {
+            for (let j = 0; j < currentState.columns; ++j) {
+                const index = currentState.oneDIndex([i, j])
+                const value = currentState.oneDArray[index]
+
+                const tileView = document.createElement("div")
+                tileView.className = "tile"
+                tileView.id = `tile${value}`
                 tileView.textContent = value.toString()
-                lineView.appendChild(tileView)
+                tileView.style.width = `${width}px`
+                tileView.style.height = `${height}px`
+                tileView.style.top = `${i * height}px`
+                tileView.style.left = `${j * width}px`
+                tileView.style.lineHeight = `${height}px`
+                puzzleView.appendChild(tileView)
                 this.tileViews.push(tileView)
             }
-            puzzleView.appendChild(lineView)
         }
         return puzzleView
     }
@@ -100,13 +116,21 @@ class ViewController {
             document.querySelector("#next").disabled = true
             return
         }
-        this.updatePuzzleFromNode(this.result.nodes[this.nodeIndex])
+        this.currentNode = this.result.nodes[this.nodeIndex]
+        this.moveTileFromNode()
     }
 
-    updatePuzzleFromNode(node) {
-        this.tileViews.forEach((value, index) => {
-            value.textContent = node.state.oneDArray[index].toString()
-            value.className = node.state.oneDArray[index] === 0 ? "tile specialTile" : "tile"
-        })
+    moveTileFromNode() {
+        const state = this.currentNode.state
+        const newSpecialIndex = state.specialIndex
+        const reversedAction = this.currentNode.action.map(value => -value)
+        const previousSpecialIndex = state.oneDIndex(addTuple(state.twoDIndex(newSpecialIndex), reversedAction))
+        const previousTop = this.tileViews[previousSpecialIndex].style.top
+        const previousLeft = this.tileViews[previousSpecialIndex].style.left
+        this.tileViews[previousSpecialIndex].style.top = this.tileViews[newSpecialIndex].style.top
+        this.tileViews[previousSpecialIndex].style.left = this.tileViews[newSpecialIndex].style.left
+        this.tileViews[newSpecialIndex].style.top = previousTop
+        this.tileViews[newSpecialIndex].style.left = previousLeft
+        swapArray(this.tileViews, previousSpecialIndex, newSpecialIndex)
     }
 }

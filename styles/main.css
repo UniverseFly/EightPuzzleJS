@@ -1,17 +1,23 @@
 .tile {
-    width: 100px;
-    height: 100px;
-    line-height: 100px;
-    padding: 30px;
-    margin: 10px;
+    /*width: 100px;*/
+    /*height: 100px;*/
+    /*line-height: 100px;*/
+    /*padding: 30px;*/
+    /*margin: 10px;*/
     text-align: center;
-    vertical-align: middle;
     background-color: mediumpurple;
     border: solid lightgreen 5px;
     color: azure;
-    display: inline-block;
+    position: absolute;
+    transition: left 500ms, top 500ms;
+    /*display: inline-block;*/
 }
 
-.specialTile {
+#puzzleFrame {
+    position: relative;
+    border: red dotted;
+}
+
+#tile0 {
     visibility: hidden;
 }
