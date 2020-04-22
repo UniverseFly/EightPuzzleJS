@@ -6,10 +6,12 @@ class ViewController {
         this.puzzleModel = new Puzzle(3, 3, origin, goal)
         this.currentNode = new PuzzleNode(this.puzzleModel.origin)
 
+        this.tileWidth = 100
+        this.tileHeight = 100
+
         this.refreshOriginBox()
         this.refreshGoalBox()
-        this.puzzleView = this.newPuzzleView()
-        document.querySelector("#puzzleArea").appendChild(this.puzzleView)
+        this.refreshPuzzleView()
 
         document.querySelector("#recover").addEventListener("click",
             () => this.refreshPuzzleView())
@@ -19,6 +21,13 @@ class ViewController {
                 this.puzzleModel = Puzzle.random(size.rows, size.columns)
                 this.currentNode = new PuzzleNode(this.puzzleModel.origin)
                 this.refreshPuzzleView()
+
+                if (size.columns === 3) {
+                    [...Array(5).keys()].map(x => x + 9).forEach(value => {
+                        document.querySelector(`#tile${value}`).remove()
+                    })
+                }
+
                 this.refreshOriginBox()
                 this.refreshGoalBox()
             })
@@ -28,7 +37,7 @@ class ViewController {
                 this.puzzleModel = Puzzle.random(size.rows, size.columns)
                 this.currentNode = new PuzzleNode(this.puzzleModel.origin)
                 this.refreshOriginBox()
-                this.refreshPuzzleView()
+                this.moveTileFromCurrentNode()
             })
 
         document.querySelector("#goodSolve").addEventListener("click",
@@ -59,43 +68,42 @@ class ViewController {
     }
 
     refreshPuzzleView() {
-        this.puzzleView.remove()
-        this.puzzleView = this.newPuzzleView()
-        document.querySelector("#puzzleArea").appendChild(this.puzzleView)
-    }
-
-    newPuzzleView() {
-        this.tileViews = []
-
         const currentState = this.currentNode.state
-        const width = 150
-        const height = 150
-        const frameWidth = width * currentState.columns
-        const frameHeight = height * currentState.rows
-        const puzzleView = document.createElement("div")
-        puzzleView.id = "puzzleFrame"
-        puzzleView.style.width = `${frameWidth}px`
-        puzzleView.style.height = `${frameHeight}px`
+        const frameWidth = this.tileWidth * currentState.columns
+        const frameHeight = this.tileHeight * currentState.rows
+
+        let puzzleFrame = document.querySelector("#puzzleFrame")
+        if (puzzleFrame === null) {
+            puzzleFrame = document.createElement("div")
+            puzzleFrame.id = "puzzleFrame"
+            puzzleFrame.style.width = `${frameWidth}px`
+            puzzleFrame.style.height = `${frameHeight}px`
+            document.querySelector("#puzzleArea").appendChild(puzzleFrame)
+        }
+        puzzleFrame.style.width = `${frameWidth}px`
+        puzzleFrame.style.height = `${frameHeight}px`
 
         for (let i = 0; i < currentState.rows; ++i) {
             for (let j = 0; j < currentState.columns; ++j) {
                 const index = currentState.oneDIndex([i, j])
                 const value = currentState.oneDArray[index]
 
-                const tileView = document.createElement("div")
-                tileView.className = "tile"
-                tileView.id = `tile${value}`
-                tileView.textContent = value.toString()
-                tileView.style.width = `${width}px`
-                tileView.style.height = `${height}px`
-                tileView.style.top = `${i * height}px`
-                tileView.style.left = `${j * width}px`
-                tileView.style.lineHeight = `${height}px`
-                puzzleView.appendChild(tileView)
-                this.tileViews.push(tileView)
+                if (document.querySelector(`#tile${value}`) === null) {
+                    const tileView = document.createElement("div")
+                    tileView.className = "tile"
+                    tileView.id = `tile${value}`
+                    tileView.textContent = value.toString()
+                    tileView.style.width = `${this.tileWidth}px`
+                    tileView.style.height = `${this.tileHeight}px`
+                    tileView.style.lineHeight = `${this.tileHeight}px`
+                    tileView.style.top = `${i * this.tileHeight}px`
+                    tileView.style.left = `${j * this.tileWidth}px`
+                    puzzleFrame.appendChild(tileView)
+                } else {
+                    this.moveTileView(value, index)
+                }
             }
         }
-        return puzzleView
     }
 
     goodSolve() {
@@ -116,21 +124,26 @@ class ViewController {
             document.querySelector("#next").disabled = true
             return
         }
+        const previousSpecialIndex = this.currentNode.state.specialIndex
         this.currentNode = this.result.nodes[this.nodeIndex]
-        this.moveTileFromNode()
+        const currentSpecialIndex = this.currentNode.state.specialIndex
+        const movedTileId = this.currentNode.state.oneDArray[previousSpecialIndex]
+
+        this.moveTileView(0, currentSpecialIndex)
+        this.moveTileView(movedTileId, previousSpecialIndex)
     }
 
-    moveTileFromNode() {
+    moveTileFromCurrentNode() {
         const state = this.currentNode.state
-        const newSpecialIndex = state.specialIndex
-        const reversedAction = this.currentNode.action.map(value => -value)
-        const previousSpecialIndex = state.oneDIndex(addTuple(state.twoDIndex(newSpecialIndex), reversedAction))
-        const previousTop = this.tileViews[previousSpecialIndex].style.top
-        const previousLeft = this.tileViews[previousSpecialIndex].style.left
-        this.tileViews[previousSpecialIndex].style.top = this.tileViews[newSpecialIndex].style.top
-        this.tileViews[previousSpecialIndex].style.left = this.tileViews[newSpecialIndex].style.left
-        this.tileViews[newSpecialIndex].style.top = previousTop
-        this.tileViews[newSpecialIndex].style.left = previousLeft
-        swapArray(this.tileViews, previousSpecialIndex, newSpecialIndex)
+        state.oneDArray.forEach((value, index) => {
+            this.moveTileView(value, index)
+        })
+    }
+
+    moveTileView(tileId, targetIndex) {
+        const tile = document.querySelector(`#tile${tileId}`)
+        const twoDIndex = this.currentNode.state.twoDIndex(targetIndex)
+        tile.style.top = `${twoDIndex[0] * this.tileHeight}px`
+        tile.style.left = `${twoDIndex[1] * this.tileWidth}px`
     }
 }
