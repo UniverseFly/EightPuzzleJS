@@ -1,16 +1,10 @@
 .tile {
-    /*width: 100px;*/
-    /*height: 100px;*/
-    /*line-height: 100px;*/
-    /*padding: 30px;*/
-    /*margin: 10px;*/
     text-align: center;
     background-color: mediumpurple;
     border: solid lightgreen 5px;
     color: azure;
     position: absolute;
     transition: left 500ms, top 500ms;
-    /*display: inline-block;*/
 }
 
 #puzzleFrame {

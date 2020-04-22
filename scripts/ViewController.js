@@ -8,6 +8,7 @@ class ViewController {
 
         this.tileWidth = 100
         this.tileHeight = 100
+        this.borderSize = 5
 
         this.refreshOriginBox()
         this.refreshGoalBox()
@@ -69,8 +70,8 @@ class ViewController {
 
     refreshPuzzleView() {
         const currentState = this.currentNode.state
-        const frameWidth = this.tileWidth * currentState.columns
-        const frameHeight = this.tileHeight * currentState.rows
+        const frameWidth = (this.tileWidth + this.borderSize) * currentState.columns + this.borderSize
+        const frameHeight = (this.tileHeight + this.borderSize) * currentState.rows + this.borderSize
 
         let puzzleFrame = document.querySelector("#puzzleFrame")
         if (puzzleFrame === null) {
@@ -96,8 +97,8 @@ class ViewController {
                     tileView.style.width = `${this.tileWidth}px`
                     tileView.style.height = `${this.tileHeight}px`
                     tileView.style.lineHeight = `${this.tileHeight}px`
-                    tileView.style.top = `${i * this.tileHeight}px`
-                    tileView.style.left = `${j * this.tileWidth}px`
+                    tileView.style.top = `${i * (this.tileHeight + this.borderSize)}px`
+                    tileView.style.left = `${j * (this.tileWidth + this.borderSize)}px`
                     puzzleFrame.appendChild(tileView)
                 } else {
                     this.moveTileView(value, index)
@@ -143,7 +144,7 @@ class ViewController {
     moveTileView(tileId, targetIndex) {
         const tile = document.querySelector(`#tile${tileId}`)
         const twoDIndex = this.currentNode.state.twoDIndex(targetIndex)
-        tile.style.top = `${twoDIndex[0] * this.tileHeight}px`
-        tile.style.left = `${twoDIndex[1] * this.tileWidth}px`
+        tile.style.top = `${twoDIndex[0] * (this.tileHeight + this.borderSize)}px`
+        tile.style.left = `${twoDIndex[1] * (this.tileWidth + this.borderSize)}px`
     }
 }
