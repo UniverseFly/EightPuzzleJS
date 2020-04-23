@@ -14,33 +14,50 @@
 
     <div id="options">
         <div id="puzzleInfo">
-            <label for="puzzleSize">Dimension</label>
-            <select id="puzzleSize">
-                <option id="3times3">(3, 3)</option>
-                <option id="3times4">(3, 4)</option>
-            </select>
-            <button id="random">randomize origin</button>
-            <div><label for="origin">Origin: </label></div>
-            <span id="origin"></span>
-            <div><label for="goal">Goal:</label></div>
-            <span id="goal"></span>
-            <button id="recover">recover</button>
+            <div class="spacing">
+                <label for="puzzleSize" class="colonAlign">Dimension: </label>
+                <select id="puzzleSize">
+                    <option id="3times3">(3, 3)</option>
+                    <option id="3times4">(3, 4)</option>
+                </select>
+            </div>
+            <div class="spacing">
+                <span class="colonAlign">Origin:  </span>
+                <span id="origin"></span>
+            </div>
+            <div class="spacing">
+                <span class="colonAlign">Goal: </span>
+                <span id="goal"></span>
+            </div>
+            <div class="spacing">
+                <span class="colonAlign">Current: </span>
+                <span id="current"></span>
+            </div>
+            <div class="spacing">
+                <span class="colonAlign">Randomize: </span>
+                <button id="random">Randomize origin</button>
+            </div>
+            <div class="spacing">
+                <span class="colonAlign">Recover: </span>
+                <button id="recover">Recover to origin</button>
+            </div>
         </div>
 
-        <br>
-
         <div id="solvePuzzle">
-            <div>
+            <div class="spacing">
                 <button id="goodSolve">Solve by A-Star using a good heuristic function</button>
-                <br>
+            </div>
+            <div class="spacing">
                 <button id="badSolve">Solve by A-Star using a bad heuristic function</button>
-                <br>
+            </div>
+            <div class="spacing">
                 <button id="greedySolve">Solve by greedy first search</button>
-                <br>
+            </div>
+            <div class="spacing">
                 <button id="slowSolve">Solve by uniform-cost search</button>
             </div>
-            <div>
-                <button id="next" disabled>Next</button>
+            <div class="spacing">
+                <button id="next" disabled class="prettyButton">Next</button>
             </div>
         </div>
     </div>

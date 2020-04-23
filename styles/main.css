@@ -1,9 +1,21 @@
 .tile {
     text-align: center;
-    background-color: mediumpurple;
-    color: azure;
     position: absolute;
     transition: all 500ms;
+    font-size: xx-large;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.correctPosition {
+    color: black;
+    background-color: #d2e9fc;
+}
+
+.wrongPosition {
+    color: black;
+    background-color: lightcoral;
 }
 
 .author {
@@ -27,14 +39,13 @@
 
 #puzzleInfo {
     margin-bottom: 10px;
-    padding: 5px;
+    padding: 10px;
     border: lightgray dotted 3px;
 }
 
 #solvePuzzle {
-    margin-top: 10px;
     border: darkblue dotted 3px;
-    padding: 5px;
+    padding: 10px;
 }
 
 .box {
@@ -46,4 +57,56 @@
 #options {
     float: left;
     margin-left: 50px;
+}
+
+.prettyButton {
+    font-weight: bold;
+    color: white;
+    background-color: darkblue;
+    padding: 5px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.prettyButton:hover:enabled {
+    background-color: #a3bcfc;
+}
+
+select {
+    background-color: white;
+    color: black;
+    border: black 1px solid;
+}
+
+button {
+    border: black 1px solid;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    background-color: white;
+    color: black;
+}
+
+button:active {
+    opacity: 50%;
+}
+
+button:disabled {
+    opacity: 30%;
+}
+
+button:hover:enabled {
+    background-color: lightgrey;
+}
+
+.spacing {
+    margin: 3px 2px;
+}
+
+.colonAlign {
+    text-align: right;
+    float: left;
+    width: 75px;
+    margin-right: 10px;
 }
