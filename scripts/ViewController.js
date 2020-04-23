@@ -189,6 +189,7 @@ class ViewController {
     }
 
     solveTemplate(solveFunc) {
+        this.resetSolution()
         this.inSolvedState = true
         this.result = solveFunc()
         this.result.nodes = this.result.node.expansion()
@@ -196,6 +197,26 @@ class ViewController {
 
         this.nodeIndex = 0
         document.querySelector("#next").disabled = false
+
+        const expandedCount = this.result.orderIndices.length
+        const expandedNode = document.createElement("li")
+        expandedNode.textContent = `已扩展节点数：${expandedCount}`
+
+        const remainingCount = this.result.record.length - expandedCount
+        const remainingNode = document.createElement("li")
+        remainingNode.textContent = `剩余待扩展节点数：${remainingCount}`
+
+        const solutionCount = this.result.nodes.length
+        const solutionNode = document.createElement("li")
+        solutionNode.textContent = `搜索到的路径长度：${solutionCount}`
+
+        const list = document.createElement("ul")
+        list.id = "resultList"
+        list.appendChild(expandedNode)
+        list.appendChild(remainingNode)
+        list.appendChild(solutionNode)
+
+        document.querySelector("#result").appendChild(list)
     }
 
     clickTile(event) {
@@ -225,6 +246,11 @@ class ViewController {
         this.nodeIndex = undefined
         this.inSolvedState = false
         document.querySelector("#next").disabled = true
+
+        const resultList = document.querySelector("#resultList")
+        if (resultList !== null) {
+            resultList.remove()
+        }
     }
 
     clickNext() {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <title>Eight Puzzle</title>
@@ -15,56 +15,57 @@
     <div id="options">
         <div id="puzzleInfo">
             <div class="spacing">
-                <label for="puzzleSize" class="colonAlign">Dimension: </label>
+                <label for="puzzleSize" class="colonAlign">数码维度:</label>
                 <select id="puzzleSize">
                     <option id="3times3">(3, 3)</option>
                     <option id="3times4">(3, 4)</option>
                 </select>
             </div>
             <div class="spacing">
-                <span class="colonAlign">Origin:  </span>
+                <span class="colonAlign">原始状态:</span>
                 <span id="origin"></span>
             </div>
             <div class="spacing">
-                <span class="colonAlign">Goal: </span>
+                <span class="colonAlign">目标状态:</span>
                 <span id="goal"></span>
             </div>
             <div class="spacing">
-                <span class="colonAlign">Current: </span>
+                <span class="colonAlign">当前状态: </span>
                 <span id="current"></span>
             </div>
             <div class="spacing">
-                <span class="colonAlign">Randomize: </span>
-                <button id="random">Randomize origin</button>
+                <span class="colonAlign">随机化:</span>
+                <button id="random">随机化原始状态</button>
             </div>
             <div class="spacing">
-                <span class="colonAlign">Recover: </span>
-                <button id="recover">Recover to origin</button>
+                <span class="colonAlign">恢复:</span>
+                <button id="recover">恢复到原始状态</button>
             </div>
         </div>
 
         <div id="solvePuzzle">
             <div class="spacing">
-                <button id="goodSolve">Solve by A-Star using a good heuristic function</button>
+                <button id="goodSolve">A* 搜索（好的启发函数）</button>
             </div>
             <div class="spacing">
-                <button id="badSolve">Solve by A-Star using a bad heuristic function</button>
+                <button id="badSolve">A* 搜索（坏的启发函数）</button>
             </div>
             <div class="spacing">
-                <button id="greedySolve">Solve by greedy first search</button>
+                <button id="greedySolve">贪婪搜索</button>
             </div>
             <div class="spacing">
-                <button id="slowSolve">Solve by uniform-cost search</button>
+                <button id="slowSolve">一致代价搜索</button>
             </div>
             <div class="spacing">
                 <button id="next" disabled class="prettyButton">Next</button>
             </div>
         </div>
     </div>
-
 </div>
-</body>
-<script src="scripts/Utilities.js"></script><!---->
+
+<div id="result" class="box"></div>
+
+<script src="scripts/Utilities.js"></script>
 <script src="scripts/PuzzleTypes.js"></script>
 <script src="scripts/Puzzle.js"></script>
 <script src="scripts/PuzzleTree.js"></script>
@@ -75,4 +76,5 @@
 <script src="scripts/SlowPuzzleAgent.js"></script>
 <script src="scripts/ViewController.js"></script>
 <script src="scripts/main.js"></script>
+</body>
 </html>
