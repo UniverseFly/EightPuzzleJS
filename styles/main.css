@@ -127,7 +127,9 @@ button:hover:enabled {
     font-size: small;
 }
 
-
-/*ul {*/
-/*    list-style-position: inside;*/
-/*}*/
+#clickTiles {
+    padding: 5px;
+    margin-bottom: 10px;
+    border: lightblue dotted 3px;
+    width: 100px;
+}
