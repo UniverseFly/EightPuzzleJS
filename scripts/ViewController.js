@@ -191,32 +191,185 @@ class ViewController {
     solveTemplate(solveFunc) {
         this.resetSolution()
         this.inSolvedState = true
+
+        const startTime = new Date()
         this.result = solveFunc()
+        const finishedTime = new Date()
+
+        this.result.timeCost = (finishedTime - startTime)
         this.result.nodes = this.result.node.expansion()
         this.result.node = undefined
 
         this.nodeIndex = 0
         document.querySelector("#next").disabled = false
 
+        function createLi(content) {
+            const node = document.createElement("li")
+            node.textContent = content
+            return node
+        }
+
         const expandedCount = this.result.orderIndices.length
-        const expandedNode = document.createElement("li")
-        expandedNode.textContent = `已扩展节点数：${expandedCount}`
+        const expandedContent = `已扩展节点数：${this.result.orderIndices.length}`
 
         const remainingCount = this.result.record.length - expandedCount
-        const remainingNode = document.createElement("li")
-        remainingNode.textContent = `剩余待扩展节点数：${remainingCount}`
+        const remainingContent = `剩余待扩展节点数：${remainingCount}`
 
         const solutionCount = this.result.nodes.length
-        const solutionNode = document.createElement("li")
-        solutionNode.textContent = `搜索到的路径长度：${solutionCount}`
+        const solutionContent = `搜索到的路径长度：${solutionCount}`
+
+        const timeCost = this.result.timeCost
+        const timeContent = `耗时：${timeCost}ms (${timeCost / 1000}s)`
 
         const list = document.createElement("ul")
         list.id = "resultList"
-        list.appendChild(expandedNode)
-        list.appendChild(remainingNode)
-        list.appendChild(solutionNode)
+        list.appendChild(createLi(expandedContent))
+        list.appendChild(createLi(remainingContent))
+        list.appendChild(createLi(solutionContent))
+        list.appendChild(createLi(timeContent))
 
         document.querySelector("#result").appendChild(list)
+
+        const width = document.body.clientWidth
+        const height = document.body.clientHeight
+
+        const margin = {
+            top: 50,
+            right: 100,
+            bottom: 100,
+            left: 100
+        }
+
+        const innerWidth = width - margin.left - margin.right
+        const innerHeight = height - margin.top - margin.bottom
+
+        const tree = d3.tree().size([innerWidth, innerHeight])
+        const svgGroup = d3.select("#svgArea")
+            .selectAll("svg")
+            .data([null])
+            .join("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`)
+
+        this.searchTree = {
+            model: new SearchTree(this.result),
+            treeFunc: tree,
+            svgGroup: svgGroup,
+            selectingNode: true
+        }
+        const root = tree(d3.hierarchy(this.searchTree.model.getRoot()))
+        console.log(root.descendants())
+        svgGroup
+            .selectAll("g")
+            .data(root.descendants(), d => d.data.id)
+            .enter()
+            .append("g")
+            .attr("transform", d => {
+                d.data.x0 = d.x
+                d.data.y0 = d.y
+                return `translate(${d.x}, ${d.y})`
+            })
+            .attr("id", `node0`)
+            .append("circle")
+            .style("fill", "black")
+            .style("r", "5px")
+    }
+
+    enterNextTreeState() {
+        const model = this.searchTree.model
+        const treeFunc = this.searchTree.treeFunc
+        const svgGroup = this.searchTree.svgGroup
+
+        const root = treeFunc(d3.hierarchy(model.getRoot()))
+        // console.log(root)
+
+        const linkPathGenerator = d3.linkVertical()
+            .x(d => d.x)
+            .y(d => d.y)
+        const parentPathGenerator = d => {
+            const parent = {
+                x: d.source.data.x0,
+                y: d.source.data.y0
+            }
+            return linkPathGenerator({
+                source: parent,
+                target: parent
+            })
+        }
+
+        if (this.searchTree.selectingNode) {
+            console.log(model.getExpansionId())
+            d3.select(`#node${model.getExpansionId()}`)
+                .select("circle")
+                .style("fill", "red")
+            this.searchTree.selectingNode = false;
+
+            model.expand()
+
+            const root = treeFunc(d3.hierarchy(model.getRoot()))
+
+            const nodesEnter = svgGroup.selectAll("g")
+                .data(root.descendants(), d => d.data.id)
+                .enter()
+                .append("g")
+                .attr("transform", d => `translate(${d.parent.data.x0}, ${d.parent.data.y0})`)
+
+            nodesEnter
+                .append("circle")
+                .style("fill", "black")
+                .style("r", "5px")
+
+            nodesEnter
+                .append("text")
+                .style("opacity", "0")
+                .text(d => d.data.cost)
+
+            svgGroup.selectAll("path")
+                .data(root.links(), d => `${d.source.data.id} ${d.target.data.id}`)
+                .enter()
+                .append("path")
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("d", parentPathGenerator)
+
+            return
+        }
+
+        const nodesUpdate = svgGroup.selectAll("g")
+            .data(root.descendants(), d => d.data.id)
+            .attr("id", d => `node${d.data.id}`)
+
+        nodesUpdate.selectAll("circle")
+            .style("fill", "black")
+
+        nodesUpdate.selectAll("text")
+            .transition()
+            .duration(2000)
+            .style("opacity", "100%")
+
+        nodesUpdate/*.merge(nodesEnter)*/
+            // .join("g")
+            .transition()
+            .duration(2000)
+            .attr("transform", d => {
+                // 记录原坐标
+                d.data.x0 = d.x
+                d.data.y0 = d.y
+                return `translate(${d.x}, ${d.y})`
+            })
+
+        const linksUpdate = svgGroup.selectAll("path")
+            .data(root.links(), d => `${d.source.data.id} ${d.target.data.id}`)
+
+        linksUpdate/*.merge(linksEnter)*/
+            // .join("path")
+            .transition()
+            .duration(2000)
+            .attr("d", linkPathGenerator)
+
+        this.searchTree.selectingNode = true;
     }
 
     clickTile(event) {

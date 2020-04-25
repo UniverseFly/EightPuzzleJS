@@ -67,6 +67,12 @@
 
 <div id="result" class="box"></div>
 
+<div>
+    <button onclick="(() => viewController.enterNextTreeState())()">Aha</button>
+</div>
+<div id="svgArea"></div>
+
+<script src="scripts/Libraries/d3.min.js"></script>
 <script src="scripts/Utilities.js"></script>
 <script src="scripts/PuzzleTypes.js"></script>
 <script src="scripts/Puzzle.js"></script>
@@ -76,6 +82,7 @@
 <script src="scripts/BadPuzzleAgent.js"></script>
 <script src="scripts/GreedyPuzzleAgent.js"></script>
 <script src="scripts/SlowPuzzleAgent.js"></script>
+<script src="scripts/SearchTree.js"></script>
 <script src="scripts/ViewController.js"></script>
 <script src="scripts/main.js"></script>
 </body>

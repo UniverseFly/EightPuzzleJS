@@ -133,3 +133,12 @@ button:hover:enabled {
     border: lightblue dotted 3px;
     width: 100px;
 }
+
+path {
+    fill: none;
+    stroke: #a3bcfc;
+}
+
+.expandingNode {
+    fill: red;
+}
