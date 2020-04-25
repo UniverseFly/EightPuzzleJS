@@ -4,7 +4,7 @@
 > And the end result is a webpage where JavaScript and especially its *d3.js* framework are
 > used for implementation. 
 
-**You can experiment with the functionalities directly in [this](universefly.github.io/EightPuzzleJS) website.**
+**You can experiment with the functionalities directly in [this](https://universefly.github.io/EightPuzzleJS/) website.**
 
 ## User Interface
 
