@@ -139,6 +139,14 @@ path {
     stroke: #a3bcfc;
 }
 
-.expandingNode {
-    fill: red;
+circle {
+    fill: lightgrey;
+}
+
+.d3-tip {
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 11px;
 }

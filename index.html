@@ -19,8 +19,8 @@
             <div class="spacing">
                 <label for="puzzleSize" class="colonAlign">数码维度:</label>
                 <select id="puzzleSize">
-                    <option id="3times3">(3, 3)</option>
-                    <option id="3times4">(3, 4)</option>
+                    <option id="3times3">3 x 3</option>
+                    <option id="3times4">4 x 4 (状态多易卡死）</option>
                 </select>
             </div>
             <div class="spacing">
@@ -67,12 +67,10 @@
 
 <div id="result" class="box"></div>
 
-<div>
-    <button onclick="(() => viewController.enterNextTreeState())()">Aha</button>
-</div>
 <div id="svgArea"></div>
 
 <script src="scripts/Libraries/d3.min.js"></script>
+<script src="scripts/Libraries/d3-tip.js"></script>
 <script src="scripts/Utilities.js"></script>
 <script src="scripts/PuzzleTypes.js"></script>
 <script src="scripts/Puzzle.js"></script>

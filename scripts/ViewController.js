@@ -231,24 +231,35 @@ class ViewController {
         document.querySelector("#result").appendChild(list)
 
         const width = document.body.clientWidth
-        const height = document.body.clientHeight
+        const height = Math.floor(window.screen.height * 0.7)
 
         const margin = {
-            top: 50,
-            right: 100,
+            top: 20,
+            right: 50,
             bottom: 100,
-            left: 100
+            left: 50
         }
 
         const innerWidth = width - margin.left - margin.right
         const innerHeight = height - margin.top - margin.bottom
 
         const tree = d3.tree().size([innerWidth, innerHeight])
-        const svgGroup = d3.select("#svgArea")
+
+        const svgArea = d3.select("#svgArea")
+
+        svgArea
+            .append("p")
+            .style("text-align", "center")
+            .style("color", "#fd9645")
+            .text("点击区域逐步演示搜索树（放到圆点上查看状态）")
+
+        const svgGroup = svgArea
+            .style("margin", "8px")
+            .style("border", "3px dotted #fd9645")
             .selectAll("svg")
             .data([null])
             .join("svg")
-            .attr("width", width)
+            .attr("width", width - 22)
             .attr("height", height)
             .append("g")
             .attr("transform", `translate(${margin.left}, ${margin.top})`)
@@ -259,9 +270,14 @@ class ViewController {
             svgGroup: svgGroup,
             selectingNode: true
         }
+
         const root = tree(d3.hierarchy(this.searchTree.model.getRoot()))
         console.log(root.descendants())
-        svgGroup
+
+        d3.select("#svgArea")
+            .on("click", () => this.enterNextTreeState())
+
+        const g = svgGroup
             .selectAll("g")
             .data(root.descendants(), d => d.data.id)
             .enter()
@@ -272,18 +288,51 @@ class ViewController {
                 return `translate(${d.x}, ${d.y})`
             })
             .attr("id", `node0`)
-            .append("circle")
-            .style("fill", "black")
-            .style("r", "5px")
+        g.append("circle")
+            .style("r", "4px")
+        g.append("text")
+            .text(d => d.data.cost)
+            .style("font-size", "11px")
+            .attr("x", "5px")
+            .attr("y", "2px")
+
+        const tip = d3.tip()
+            .attr("class", "d3-tip")
+            .offset([-5, 0])
+            .html(function (d) {
+                let str = ""
+                const arr = Array.from(d.data.state.oneDArray);
+                const rows = d.data.state.rows
+                const columns = d.data.state.columns
+                for (let i = 0; i < rows; ++i) {
+                    if (i !== 0) {
+                        str += "<br>"
+                    }
+                    for (let j = 0; j < columns; ++j) {
+                        if (j !== 0) {
+                            str += "&nbsp;"
+                        }
+                        const index = d.data.state.oneDIndex([i, j])
+                        str += `${arr[index]}`
+                    }
+                }
+                return str
+            });
+
+        g.call(tip)
+
+        d3.select("#node0")
+            .select("circle")
+            .on("mouseover", tip.show)
+            .on("mouseout", tip.hide)
+
+        this.searchTree.tip = tip
     }
 
     enterNextTreeState() {
         const model = this.searchTree.model
         const treeFunc = this.searchTree.treeFunc
         const svgGroup = this.searchTree.svgGroup
-
-        const root = treeFunc(d3.hierarchy(model.getRoot()))
-        // console.log(root)
 
         const linkPathGenerator = d3.linkVertical()
             .x(d => d.x)
@@ -303,56 +352,65 @@ class ViewController {
             console.log(model.getExpansionId())
             d3.select(`#node${model.getExpansionId()}`)
                 .select("circle")
+                .transition()
                 .style("fill", "red")
             this.searchTree.selectingNode = false;
-
-            model.expand()
-
-            const root = treeFunc(d3.hierarchy(model.getRoot()))
-
-            const nodesEnter = svgGroup.selectAll("g")
-                .data(root.descendants(), d => d.data.id)
-                .enter()
-                .append("g")
-                .attr("transform", d => `translate(${d.parent.data.x0}, ${d.parent.data.y0})`)
-
-            nodesEnter
-                .append("circle")
-                .style("fill", "black")
-                .style("r", "5px")
-
-            nodesEnter
-                .append("text")
-                .style("opacity", "0")
-                .text(d => d.data.cost)
-
-            svgGroup.selectAll("path")
-                .data(root.links(), d => `${d.source.data.id} ${d.target.data.id}`)
-                .enter()
-                .append("path")
-                .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("d", parentPathGenerator)
 
             return
         }
 
+        if (model.index === model.orderIndices.length - 1) {
+            return;
+        }
+
+        d3.select(`#node${model.getExpansionId()}`)
+            .select("circle")
+            .transition()
+            .duration(1000)
+            .style("fill", "black")
+        model.expand()
+        const root = treeFunc(d3.hierarchy(model.getRoot()))
+
+        // 需要先更新 links!!!
+
+        const linksUpdate = svgGroup.selectAll("path")
+            .data(root.links(), d => `${d.source.data.id} ${d.target.data.id}`)
+
+        const linksEnter = linksUpdate.enter()
+            .append("path")
+            .attr("fill", "none")
+            .attr("stroke", "black")
+            .attr("d", parentPathGenerator)
+
+        linksUpdate.merge(linksEnter)
+            // .join("path")
+            .transition()
+            .duration(1000)
+            .attr("d", linkPathGenerator)
+
         const nodesUpdate = svgGroup.selectAll("g")
             .data(root.descendants(), d => d.data.id)
-            .attr("id", d => `node${d.data.id}`)
 
-        nodesUpdate.selectAll("circle")
-            .style("fill", "black")
+        const nodesEnter = nodesUpdate.enter()
+            .append("g")
+            .attr("transform", d => `translate(${d.parent.data.x0}, ${d.parent.data.y0})`)
 
-        nodesUpdate.selectAll("text")
+        nodesEnter
+            .append("circle")
+            .style("r", "4px")
+            .on("mouseover", this.searchTree.tip.show)
+            .on("mouseout", this.searchTree.tip.hide)
+
+        nodesEnter
+            .append("text")
+            .text(d => d.data.cost)
+            .style("font-size", "11px")
+            .attr("x", "5px")
+            .attr("y", "2px")
+
+        nodesEnter
             .transition()
-            .duration(2000)
-            .style("opacity", "100%")
-
-        nodesUpdate/*.merge(nodesEnter)*/
-            // .join("g")
-            .transition()
-            .duration(2000)
+            .duration(1000)
             .attr("transform", d => {
                 // 记录原坐标
                 d.data.x0 = d.x
@@ -360,14 +418,18 @@ class ViewController {
                 return `translate(${d.x}, ${d.y})`
             })
 
-        const linksUpdate = svgGroup.selectAll("path")
-            .data(root.links(), d => `${d.source.data.id} ${d.target.data.id}`)
-
-        linksUpdate/*.merge(linksEnter)*/
-            // .join("path")
+        nodesUpdate
             .transition()
-            .duration(2000)
-            .attr("d", linkPathGenerator)
+            .duration(1000)
+            .attr("transform", d => {
+                // 记录原坐标
+                d.data.x0 = d.x
+                d.data.y0 = d.y
+                return `translate(${d.x}, ${d.y})`
+            })
+
+        nodesUpdate.merge(nodesEnter)
+            .attr("id", d => `node${d.data.id}`)
 
         this.searchTree.selectingNode = true;
     }
@@ -395,6 +457,11 @@ class ViewController {
     }
 
     resetSolution() {
+        d3.select("#svgArea")
+            .style("margin", "")
+            .style("border", "")
+            .selectAll("*").remove()
+
         this.result = undefined
         this.nodeIndex = undefined
         this.inSolvedState = false
