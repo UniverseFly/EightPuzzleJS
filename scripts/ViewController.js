@@ -14,6 +14,9 @@ class ViewController {
 
         document.querySelector("#recover").addEventListener("click",
             () => {
+                if (this.inSolvedState) {
+                    this.resetSolution()
+                }
                 this.currentNode = new PuzzleNode(this.puzzleModel.origin)
                 this.updateViewFromModel()
             })
