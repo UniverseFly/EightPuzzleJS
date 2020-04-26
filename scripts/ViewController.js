@@ -1,3 +1,4 @@
+/// 连接视图和模型
 class ViewController {
     constructor() {
         const origin = [0, 8, 7, 6, 5, 4, 3, 2, 1]
@@ -218,7 +219,7 @@ class ViewController {
         const remainingCount = this.result.record.length - expandedCount
         const remainingContent = `剩余待扩展节点数：${remainingCount}`
 
-        const solutionCount = this.result.nodes.length
+        const solutionCount = this.result.nodes.length - 1
         const solutionContent = `搜索到的路径长度：${solutionCount}`
 
         const timeCost = this.result.timeCost

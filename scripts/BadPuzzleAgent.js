@@ -1,9 +1,11 @@
+/// 根据有多少格子与最终状态不同来启发的 Agent
 class BadPuzzleAgent extends BestFirstSearchable {
     constructor(problemTree) {
         super()
         this.problemTree = problemTree
     }
 
+    /// 计算传入状态与最终状态的不同数
     heuristicCost(state) {
         console.assert(state.oneDArray.length === this.problemTree.problem.goal.oneDArray.length,
             "参数状态所表示的网格大小必须不匹配")
